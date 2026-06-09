@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="static/description/icon.png" alt="Claudoo" width="120"/>
+<img src="https://cicdoo.com/assets/img/cicdoo_colored.png" alt="CICDoo" width="120" />
 
 # Claudoo
 
@@ -163,8 +163,9 @@ maintained by **[CICDoo](https://cicdoo.com)**, who also offer:
 - 🛟 **Priority support & SLAs** for production rollouts.
 - 🧩 **Custom tools & integrations** — extend the safe tool surface to your models
   and workflows.
-- 📜 **Commercial / alternative licensing** for organizations that cannot adopt
-  LGPL terms.
+- 📜 **Commercial license** for organizations that cannot adopt LGPL terms —
+  modify Claudoo and keep your changes private, embed it in a closed product, or
+  get warranty/indemnification. See [COMMERCIAL_LICENSE.md](COMMERCIAL_LICENSE.md).
 - 🎓 **Training & security review** for teams enabling AI access to their ERP.
 
 👉 **Get in touch: [sam@cicdoo.com](mailto:sam@cicdoo.com) · [cicdoo.com](https://cicdoo.com)**
@@ -195,4 +196,15 @@ community project and is not affiliated with or endorsed by Anthropic.
 
 ## 📄 License
 
-[LGPL-3.0](LICENSE) © [CICDoo](https://cicdoo.com)
+Claudoo is **dual-licensed** — choose whichever fits you:
+
+- 🆓 **Open source:** [GNU LGPL-3.0-or-later](LICENSE). Free for any use, including
+  on both Odoo Community and Enterprise; modifications to Claudoo's own files stay
+  under the LGPL.
+- 💼 **Commercial:** a proprietary-friendly license from CICDoo that lifts the LGPL
+  obligations (keep modifications private, embed in closed products, warranty/SLA).
+  See [COMMERCIAL_LICENSE.md](COMMERCIAL_LICENSE.md) · **license@cicdoo.com**.
+
+`SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Claudoo-Commercial`
+
+© 2026 [CICDoo](https://cicdoo.com)

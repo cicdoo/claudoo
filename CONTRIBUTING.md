@@ -36,7 +36,26 @@ welcome — bug reports, documentation, tests, and code.
 - One logical change per PR; write a clear description and link any issue.
 - Make sure CI is green (lint + tests).
 - Update `CHANGELOG.md` under an *Unreleased* heading.
-- By contributing, you agree your contributions are licensed under **LGPL-3.0**.
+
+### Licensing of contributions (important)
+
+Claudoo is **dual-licensed** (open-source LGPL-3.0 **and** a commercial license —
+see [COMMERCIAL_LICENSE.md](COMMERCIAL_LICENSE.md)). For that model to work, the
+maintainer must be able to ship every contribution under **both** licenses.
+
+By submitting a contribution, you:
+
+1. license your contribution under the **LGPL-3.0-or-later**; **and**
+2. grant **CICDoo** a perpetual, worldwide, royalty-free, irrevocable right to
+   also license your contribution under CICDoo's **commercial license** (and
+   future versions of it), i.e. to relicense and sublicense it as part of
+   Claudoo; **and**
+3. confirm you have the right to grant this — the contribution is your original
+   work (or you have authority to submit it) and is free of third-party claims.
+
+This is a lightweight inbound=outbound + relicensing grant; it lets CICDoo fund
+Claudoo's development through commercial licensing while keeping the project open.
+If your employer owns your work, please ensure you have permission to contribute.
 
 ## Commercial support
 

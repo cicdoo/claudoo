@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+# Copyright 2026 CICDoo (https://cicdoo.com)
+# SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Claudoo-Commercial
+# Dual-licensed: open source (LGPL-3, see LICENSE) or commercial (see COMMERCIAL_LICENSE.md).
 """The read-only SQL validator is the single most security-sensitive surface in
 Claudoo: it is the text gate that, together with Postgres' ``SET TRANSACTION
 READ ONLY``, keeps ``sql_select`` from ever mutating data. These tests pin its

@@ -1,4 +1,7 @@
 /** @odoo-module **/
+// Copyright 2026 CICDoo (https://cicdoo.com)
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Claudoo-Commercial
+// Dual-licensed: open source (LGPL-3, see LICENSE) or commercial (see COMMERCIAL_LICENSE.md).
 import { Component, useState, onWillStart, onWillUnmount } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";

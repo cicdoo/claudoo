@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+# Copyright 2026 CICDoo (https://cicdoo.com)
+# SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Claudoo-Commercial
+# Dual-licensed: open source (LGPL-3, see LICENSE) or commercial (see COMMERCIAL_LICENSE.md).
 """End-to-end check of the ``ai_bridge`` auth method on a real tool endpoint:
 missing/invalid bearer tokens are rejected, and a valid token runs the call as
 the session's user (never superuser)."""

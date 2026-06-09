@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+# Copyright 2026 CICDoo (https://cicdoo.com)
+# SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Claudoo-Commercial
+# Dual-licensed: open source (LGPL-3, see LICENSE) or commercial (see COMMERCIAL_LICENSE.md).
 """``_ai_effective_tools`` is the single source of truth the controller consults
 before running any tool. These tests pin the default-deny posture for writes and
 the zero-trust override."""

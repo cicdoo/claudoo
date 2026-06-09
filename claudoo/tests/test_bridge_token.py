@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+# Copyright 2026 CICDoo (https://cicdoo.com)
+# SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Claudoo-Commercial
+# Dual-licensed: open source (LGPL-3, see LICENSE) or commercial (see COMMERCIAL_LICENSE.md).
 """The bridge token is the capability the MCP forwarder presents to act as a
 user. Forging or replaying it would bypass every per-user ACL, so the
 mint/verify round-trip and each rejection path are pinned here."""

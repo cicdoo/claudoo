@@ -27,4 +27,11 @@ Claude Code CLI over a sandboxed, permission-aware bridge.
 - **Test suite** covering the SQL guard, bridge-token mint/verify, tool-access
   policy, the `ai_bridge` auth method, and the audit log.
 
+### Licensing
+- **Dual-licensed**: open-source **LGPL-3.0-or-later** *or* a **commercial license**
+  from CICDoo (see `COMMERCIAL_LICENSE.md`). Every source file carries an SPDX
+  `LGPL-3.0-or-later OR LicenseRef-Claudoo-Commercial` notice.
+- Runs on **both Odoo Community and Enterprise** editions (depends only on
+  Community modules: `web`, `bus`, `mail`).
+
 [18.0.1.0.0]: https://github.com/cicdoo/claudoo/releases/tag/18.0.1.0.0

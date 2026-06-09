@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+# Copyright 2026 CICDoo (https://cicdoo.com)
+# SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Claudoo-Commercial
+# Dual-licensed: open source (LGPL-3, see LICENSE) or commercial (see COMMERCIAL_LICENSE.md).
 """The audit log is written on a SEPARATE committed cursor so it survives a
 rollback of the failed tool call it describes. This test proves the row is
 durably committed (visible from an independent cursor) rather than tied to the

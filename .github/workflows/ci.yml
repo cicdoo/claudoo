@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  push:
+    branches: [main, "18.0"]
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install linters
+        run: pip install flake8
+      - name: flake8
+        # E501 (line length) is relaxed; Odoo conventionally allows long lines.
+        run: flake8 . --count --max-line-length=120 --extend-ignore=E203,W503 --exclude=.git,__pycache__
+
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: odoo
+          POSTGRES_PASSWORD: odoo
+          POSTGRES_DB: postgres
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    strategy:
+      matrix:
+        odoo-version: ["18.0"]
+    steps:
+      - name: Checkout addon
+        uses: actions/checkout@v4
+        with:
+          path: claudoo
+
+      - name: Checkout Odoo ${{ matrix.odoo-version }}
+        uses: actions/checkout@v4
+        with:
+          repository: odoo/odoo
+          ref: ${{ matrix.odoo-version }}
+          path: odoo
+          depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install system deps
+        run: sudo apt-get update && sudo apt-get install -y libldap2-dev libsasl2-dev
+
+      - name: Install Odoo + requirements
+        run: |
+          pip install -r odoo/requirements.txt
+          pip install -e odoo
+          pip install requests
+
+      - name: Install Claudoo and run its tests
+        env:
+          PGHOST: localhost
+          PGUSER: odoo
+          PGPASSWORD: odoo
+        run: |
+          odoo \
+            --db_host=localhost --db_user=odoo --db_password=odoo \
+            --addons-path=odoo/addons,. \
+            -d claudoo_ci \
+            -i claudoo \
+            --test-enable --test-tags claudoo \
+            --workers=0 \
+            --stop-after-init --log-level=test
