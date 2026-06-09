@@ -6,6 +6,10 @@
 
 ### Chat with your Odoo — safely.
 
+[![Deploy on CICDoo](https://img.shields.io/badge/🚀%20Deploy%20on%20CICDoo-1a73e8?style=for-the-badge)](https://www.cicdoo.com)
+[![Get Support](https://img.shields.io/badge/🛟%20Get%20Support-0f9d58?style=for-the-badge)](https://www.cicdoo.com)
+[![Sponsor](https://img.shields.io/badge/♥%20Sponsor-EA4AAA?style=for-the-badge)](https://github.com/sponsors/cicdoo)
+
 **An in-Odoo AI assistant powered by the Claude Code CLI. It answers questions,
 queries your data, and builds reports — running as the logged-in user, never as
 superuser, with a full audit trail.**
