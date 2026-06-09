@@ -25,9 +25,6 @@ superuser, with a full audit trail.**
 
 </div>
 
-> _Add a screenshot or GIF of the chat at `static/description/screenshot.png` and
-> reference it here — it is the single highest-impact thing for adoption._
-
 ---
 
 ## Why Claudoo?
