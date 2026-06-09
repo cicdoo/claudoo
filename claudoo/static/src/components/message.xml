@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="claudoo.Message">
+        <div t-attf-class="o_ai_msg o_ai_msg_{{props.message.role}} d-flex flex-column mb-3">
+            <div class="o_ai_msg_role small text-muted mb-1">
+                <t t-esc="roleLabel"/>
+            </div>
+
+            <!-- Tool call chips -->
+            <t t-if="toolCalls.length">
+                <div class="o_ai_tools mb-1">
+                    <div t-foreach="toolCalls" t-as="call" t-key="call.id"
+                         class="o_ai_tool_chip d-flex align-items-center small">
+                        <i t-attf-class="fa {{statusIcon(call)}} me-1"/>
+                        <span class="fw-bold me-1" t-esc="call.name"/>
+                        <span class="text-muted text-truncate" t-esc="summarizeInput(call)"/>
+                    </div>
+                </div>
+            </t>
+
+            <!-- Attachment chips (files the user attached to this turn) -->
+            <t t-if="attachments.length">
+                <div class="o_ai_attachments d-flex flex-wrap gap-1 mb-1">
+                    <div t-foreach="attachments" t-as="att" t-key="att.id"
+                         class="o_ai_attachment_chip d-flex align-items-center small">
+                        <i t-attf-class="fa {{ attachmentIcon(att) }} me-1"/>
+                        <span class="text-truncate" t-esc="att.name"/>
+                    </div>
+                </div>
+            </t>
+
+            <!-- Body: render markdown for the assistant, plain text for the user -->
+            <t t-if="props.message.body">
+                <div t-if="props.message.role === 'user'"
+                     class="o_ai_msg_body o_ai_msg_plain" t-esc="props.message.body"/>
+                <div t-else="" class="o_ai_msg_body o_ai_md" t-out="bodyHtml"/>
+            </t>
+        </div>
+    </t>
+
+</templates>

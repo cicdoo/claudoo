@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Default configuration parameters -->
+    <record id="param_cli_glob" model="ir.config_parameter">
+        <field name="key">claudoo.cli_glob</field>
+        <field name="value">/opt/odoo/.local/share/code-server/extensions/anthropic.claude-code-*/resources/native-binary/claude</field>
+    </record>
+    <record id="param_home_root" model="ir.config_parameter">
+        <field name="key">claudoo.home_root</field>
+        <field name="value">/var/lib/odoo/claudoo_home</field>
+    </record>
+    <record id="param_scratch_root" model="ir.config_parameter">
+        <field name="key">claudoo.scratch_root</field>
+        <field name="value">/var/lib/odoo/claudoo_scratch</field>
+    </record>
+    <record id="param_model" model="ir.config_parameter">
+        <field name="key">claudoo.model</field>
+        <field name="value">claude-sonnet-4-5</field>
+    </record>
+    <record id="param_base_url" model="ir.config_parameter">
+        <field name="key">claudoo.base_url</field>
+        <field name="value">http://127.0.0.1:8069</field>
+    </record>
+    <record id="param_sql_enabled" model="ir.config_parameter">
+        <field name="key">claudoo.sql_enabled</field>
+        <field name="value">True</field>
+    </record>
+
+    <!-- Client action that opens the chat UI -->
+    <record id="action_ai_chat" model="ir.actions.client">
+        <field name="name">Claudoo</field>
+        <field name="tag">claudoo.chat</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_ai_root" name="Claudoo"
+              web_icon="claudoo,static/description/icon.png"
+              sequence="20" groups="group_ai_user"/>
+    <menuitem id="menu_ai_chat" name="Chat"
+              parent="menu_ai_root" action="action_ai_chat"
+              sequence="10" groups="group_ai_user"/>
+
+    <!-- Cron: reap stuck running sessions and GC old scratch dirs -->
+    <record id="cron_ai_reaper" model="ir.cron">
+        <field name="name">Claudoo: reap stale sessions</field>
+        <field name="model_id" ref="model_claudoo_session"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_reap_stale()</field>
+        <field name="interval_number">30</field>
+        <field name="interval_type">minutes</field>
+        <field name="active">True</field>
+    </record>
+
+</odoo>

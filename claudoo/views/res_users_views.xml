@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_users_form_ai_oauth" model="ir.ui.view">
+        <field name="name">res.users.form.ai.oauth</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Claudoo AI Assistant" name="claudoo"
+                      groups="claudoo.group_ai_user">
+                    <group>
+                        <field name="ai_claude_oauth_set" readonly="1"/>
+                        <button name="action_ai_claude_logout" type="object"
+                                string="Disconnect Claude account"
+                                class="btn-secondary"
+                                invisible="not ai_claude_oauth_set"
+                                confirm="Disconnect this Claude account? The user will need to log in again."/>
+                    </group>
+                    <div class="text-muted">
+                        Each user connects their own Claude subscription from the
+                        <b>AI Assistant</b> chat using the <b>Login with Claude</b>
+                        button. Credentials are stored privately per user and are
+                        never shared.
+                    </div>
+                    <group string="Tool Permissions"
+                           groups="claudoo.group_ai_manager">
+                        <field name="claudoo_tool_ids"
+                               widget="many2many_tags"
+                               placeholder="Empty = all read-only tools"/>
+                        <field name="ai_zero_trust_mode"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Same status on the simplified "My Preferences" form -->
+    <record id="view_users_form_simple_ai_oauth" model="ir.ui.view">
+        <field name="name">res.users.preferences.form.ai.oauth</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form_simple_modif"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group" position="after">
+                <group string="Claudoo AI Assistant" groups="claudoo.group_ai_user">
+                    <field name="ai_claude_oauth_set" readonly="1"/>
+                    <button name="action_ai_claude_logout" type="object"
+                            string="Disconnect Claude account"
+                            class="btn-secondary"
+                            invisible="not ai_claude_oauth_set"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
