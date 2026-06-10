@@ -40,9 +40,20 @@ WRITE_TOOLS = [
     "run_server_action",
 ]
 
-ALL_TOOLS = READ_TOOLS + WRITE_TOOLS
-# sql_select is read-only (SELECT-only), so it survives zero-trust mode.
-READONLY_TOOL_SET = set(READ_TOOLS)
+# Built-in web tools (Claude Code's native WebFetch/WebSearch). Unlike the
+# other tools these are NOT served by the mcp__odoo__* bridge — they are the
+# CLI's own built-ins, normally hard-denied. They are opt-in per user (granted
+# via res.users.claudoo_tool_ids) and deliberately kept OUT of READ_TOOLS so an
+# empty selection never auto-grants web access. The runner maps each name to its
+# built-in tool name and lifts it from the deny list when granted.
+WEB_TOOLS = ["web_fetch", "web_search"]
+WEB_TOOL_BUILTINS = {"web_fetch": "WebFetch", "web_search": "WebSearch"}
+
+ALL_TOOLS = READ_TOOLS + WRITE_TOOLS + WEB_TOOLS
+# sql_select is read-only (SELECT-only), so it survives zero-trust mode. Web
+# tools don't mutate Odoo data, so they survive zero-trust too; move them out of
+# this set if web access should be stripped under zero-trust.
+READONLY_TOOL_SET = set(READ_TOOLS) | set(WEB_TOOLS)
 
 # Default fnmatch patterns for methods orm_action/run_wizard may invoke. Used
 # when the claudoo.action_methods config parameter is unset.

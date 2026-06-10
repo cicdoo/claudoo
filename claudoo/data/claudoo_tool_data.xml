@@ -68,4 +68,17 @@
         <field name="readonly" eval="False"/>
     </record>
 
+    <!-- Built-in web tools: Claude Code's native WebFetch/WebSearch. Opt-in per
+         user; never auto-granted. Read-only (no Odoo data mutation). -->
+    <record id="tool_web_fetch" model="claudoo.tool">
+        <field name="name">web_fetch</field>
+        <field name="label">Fetch a web page (URL)</field>
+        <field name="readonly" eval="True"/>
+    </record>
+    <record id="tool_web_search" model="claudoo.tool">
+        <field name="name">web_search</field>
+        <field name="label">Search the web</field>
+        <field name="readonly" eval="True"/>
+    </record>
+
 </odoo>
