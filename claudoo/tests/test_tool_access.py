@@ -46,7 +46,7 @@ class TestToolAccess(TransactionCase):
 
     def test_zero_trust_strips_writes_keeps_reads(self):
         self._grant("orm_read", "orm_write", "orm_unlink", "sql_select")
-        self.user.ai_zero_trust_mode = "on"
+        self.user.claudoo_zero_trust_mode = "on"
         eff = self.user._ai_effective_tools()
         self.assertFalse(eff & set(WRITE_TOOLS), "writes must be stripped")
         self.assertIn("orm_read", eff)
@@ -56,7 +56,7 @@ class TestToolAccess(TransactionCase):
 
     def test_zero_trust_off_allows_granted_writes(self):
         self._grant("orm_write")
-        self.user.ai_zero_trust_mode = "off"
+        self.user.claudoo_zero_trust_mode = "off"
         self.assertIn("orm_write", self.user._ai_effective_tools())
 
     def test_web_tools_are_opt_in(self):
@@ -69,7 +69,7 @@ class TestToolAccess(TransactionCase):
         # Web tools don't mutate Odoo data, so a granted web tool stays available
         # even under zero-trust (which only strips writes).
         self._grant("orm_read", "web_fetch")
-        self.user.ai_zero_trust_mode = "on"
+        self.user.claudoo_zero_trust_mode = "on"
         self.assertIn("web_fetch", self.user._ai_effective_tools())
 
     def test_unknown_tool_names_are_ignored(self):
