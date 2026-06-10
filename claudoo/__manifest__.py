@@ -15,8 +15,9 @@ tools exposed over a sandboxed MCP bridge:
 
 * Every ORM action runs with the **current user's** permission level (never superuser).
 * Raw SQL reporting is **read-only** (SELECT only) and gated to the *AI SQL Analyst* group.
-* Claude's own built-in tools (Bash, file write, web) are disabled; it can only act
-  through the Odoo tool endpoints.
+* Claude's own built-in tools (Bash, file write) are disabled; it can only act
+  through the Odoo tool endpoints. Web access (WebFetch/WebSearch) is an opt-in
+  per-user grant, off by default.
 * Replies stream into the chat in real time over the Odoo bus.
 
 Authentication is per-user OAuth (no API key, no shared subscription): each user

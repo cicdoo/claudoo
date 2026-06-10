@@ -15,15 +15,18 @@ import time
 from odoo import api, models
 from odoo.modules.registry import Registry
 
-from .claudoo_session import DISALLOWED_BUILTINS, UPLOADS_SUBDIR
+from .claudoo_session import (
+    DISALLOWED_BUILTINS, UPLOADS_SUBDIR, WEB_TOOLS, WEB_TOOL_BUILTINS)
 
 _logger = logging.getLogger(__name__)
 
 SYSTEM_PROMPT = (
     "You are an AI assistant embedded inside an Odoo 18 ERP system. "
     "You help the current Odoo user query data and build reports. "
-    "You act through the provided `mcp__odoo__*` tools — you have no shell or web "
-    "access. The only filesystem tool available is `Read`, and it is restricted to "
+    "You act through the provided `mcp__odoo__*` tools — you have no shell access. "
+    "Web access (WebFetch/WebSearch) is available only when the tool grant in the "
+    "ODOO USER CONTEXT block below lists it; otherwise assume you cannot reach the web. "
+    "The only filesystem tool available is `Read`, and it is restricted to "
     "the files the user attached to this conversation (in your working directory); "
     "use it to open those attachments when the user refers to them, but do not "
     "attempt to read or write anything else. All actions run with the user's own Odoo permissions, "
@@ -90,6 +93,10 @@ class AiAssistantRunner(models.AbstractModel):
         # in the request env, as the user). Consumed by --allowedTools and the
         # bridge env below; the controller re-derives them authoritatively.
         allowed_tools = sorted(session._effective_tools())
+        # Granted built-in web tools (WebFetch/WebSearch). These are the CLI's own
+        # built-ins, not mcp__odoo__* tools, so they bypass the bridge: they are
+        # lifted from the deny list and added to --allowedTools by raw name below.
+        web_builtins = [WEB_TOOL_BUILTINS[t] for t in allowed_tools if t in WEB_TOOLS]
         excluded_models = sorted(session._ai_excluded_models())
         # Per-user identity/role block appended to the system prompt so the model
         # acts AS this Odoo user (built here, in the request env, as the user).
@@ -122,6 +129,7 @@ class AiAssistantRunner(models.AbstractModel):
             "token": token,
             "oauth_env": oauth_env,
             "allowed_tools": allowed_tools,
+            "web_builtins": web_builtins,
             "excluded_models": excluded_models,
             "identity": identity,
         }
@@ -378,8 +386,12 @@ class AiAssistantRunner(models.AbstractModel):
     def _build_argv(self, ctx, mcp_config_path, settings_path):
         # ToolSearch must be allowed: the mcp__odoo__* tools are deferred and the
         # model loads them via ToolSearch. It only loads tool schemas, nothing else.
+        # Web tools are CLI built-ins, so they go in by bare name (WebFetch/
+        # WebSearch) — never with the mcp__odoo__ prefix the bridge tools carry.
+        odoo_tools = [t for t in ctx["allowed_tools"] if t not in WEB_TOOLS]
         allowed = ",".join(
-            ["mcp__odoo__%s" % t for t in ctx["allowed_tools"]] + ["ToolSearch"])
+            ["mcp__odoo__%s" % t for t in odoo_tools]
+            + ctx["web_builtins"] + ["ToolSearch"])
         # NB: we intentionally do NOT use --disallowedTools. In this CLI version
         # that flag prevents the stdio MCP server's tools from attaching at all
         # (the model then sees no mcp__odoo__* tools and hallucinates tool calls
@@ -440,7 +452,10 @@ class AiAssistantRunner(models.AbstractModel):
         (the bridge token) and this settings file. Glob/Grep stay fully denied,
         so the hook only needs to guard Read."""
         keep_allowed = ("ListMcpResources", "ReadMcpResource", "ToolSearch", "Read")
-        deny = [t for t in DISALLOWED_BUILTINS if t not in keep_allowed]
+        # Per-user web grant: lift WebFetch/WebSearch from the deny list so the CLI
+        # may run them. Ungranted, they stay denied like the rest of the built-ins.
+        keep = set(keep_allowed) | set(ctx["web_builtins"])
+        deny = [t for t in DISALLOWED_BUILTINS if t not in keep]
         uploads_dir = os.path.join(ctx["scratch"].rstrip("/"), UPLOADS_SUBDIR)
         # Absolute-path allow rule uses the // prefix (uploads_dir already starts
         # with "/", so "/" + uploads_dir yields "//var/lib/...").
@@ -481,7 +496,10 @@ class AiAssistantRunner(models.AbstractModel):
                         "AI_SESSION_ID": str(ctx["session_id"]),
                         # Advisory UX: which tool schemas the bridge advertises.
                         # The controller enforces the same set authoritatively.
-                        "AI_ALLOWED_TOOLS": ",".join(ctx["allowed_tools"]),
+                        # Built-in web tools are excluded: the bridge serves only
+                        # mcp__odoo__* tools, never WebFetch/WebSearch.
+                        "AI_ALLOWED_TOOLS": ",".join(
+                            t for t in ctx["allowed_tools"] if t not in WEB_TOOLS),
                         "AI_EXCLUDED_MODELS": ",".join(ctx["excluded_models"]),
                     },
                 }

@@ -11,6 +11,7 @@ from odoo.addons.claudoo.models.claudoo_session import (
     READ_TOOLS,
     WRITE_TOOLS,
     READONLY_TOOL_SET,
+    WEB_TOOLS,
 )
 
 
@@ -57,6 +58,19 @@ class TestToolAccess(TransactionCase):
         self._grant("orm_write")
         self.user.ai_zero_trust_mode = "off"
         self.assertIn("orm_write", self.user._ai_effective_tools())
+
+    def test_web_tools_are_opt_in(self):
+        # Web access is never auto-granted: empty selection excludes it.
+        self.assertFalse(
+            set(self.user._ai_effective_tools()) & set(WEB_TOOLS),
+            "web tools must require an explicit grant")
+
+    def test_web_tool_grant_survives_zero_trust(self):
+        # Web tools don't mutate Odoo data, so a granted web tool stays available
+        # even under zero-trust (which only strips writes).
+        self._grant("orm_read", "web_fetch")
+        self.user.ai_zero_trust_mode = "on"
+        self.assertIn("web_fetch", self.user._ai_effective_tools())
 
     def test_unknown_tool_names_are_ignored(self):
         self._grant("orm_read", "definitely_not_a_tool")

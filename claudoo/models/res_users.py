@@ -16,7 +16,7 @@ from odoo import fields, models, _
 from odoo.exceptions import UserError
 from odoo.tools import str2bool
 
-from .claudoo_session import READ_TOOLS, ALL_TOOLS, READONLY_TOOL_SET
+from .claudoo_session import READ_TOOLS, ALL_TOOLS, READONLY_TOOL_SET, WEB_TOOLS
 
 _logger = logging.getLogger(__name__)
 
@@ -212,6 +212,10 @@ class ResUsers(models.Model):
                 lines.append(
                     "AI tool grant: READ-ONLY. You cannot create, modify or delete "
                     "data for this user — only query and report.")
+        if set(effective_tools) & set(WEB_TOOLS):
+            lines.append(
+                "Web access: you may use WebFetch/WebSearch to retrieve and search "
+                "public web content.")
         lines.append("--- END ODOO USER CONTEXT ---")
         return "\n".join(lines)
 
