@@ -99,6 +99,19 @@ class AiAssistantTools(http.Controller):
             raise AccessError(
                 "Model '%s' is not accessible to the AI Assistant." % model)
 
+    @staticmethod
+    def _check_access(records, operation):
+        """Enforce model ACLs and (for a concrete recordset) record rules.
+
+        Odoo 17 splits the unified ``check_access`` of newer versions into
+        ``check_access_rights`` (model-level ACL) and ``check_access_rule``
+        (record rules). Both raise AccessError on denial. ``records`` may be an
+        empty recordset standing in for the bare model, in which case only the
+        ACL is checked (there are no records to evaluate rules against)."""
+        records.check_access_rights(operation)
+        if records.ids:
+            records.check_access_rule(operation)
+
     def _check_action_method(self, method):
         """Gate a business/action method: block private/dunder unconditionally,
         then require a match against the admin-configured allowlist patterns."""
@@ -195,11 +208,11 @@ class AiAssistantTools(http.Controller):
             self._check_tool("model_introspect")
             self._check_model(model)
             Model = request.env[model]
-            Model.check_access("read")
+            self._check_access(Model, "read")
             fg = Model.fields_get(attributes=[
                 "string", "type", "required", "relation", "readonly",
                 "selection", "help"])
-            access = {op: Model.has_access(op)
+            access = {op: Model.check_access_rights(op, raise_exception=False)
                       for op in ("read", "write", "create", "unlink")}
             # AND the raw Odoo ACL with whether the matching AI tool is enabled,
             # so the model only attempts actions it can actually perform here.
@@ -228,7 +241,7 @@ class AiAssistantTools(http.Controller):
                 raise ValidationError("domain must be a list.")
             lim = min(int(limit or 80), MAX_LIMIT)
             Model = request.env[model]
-            Model.check_access("read")
+            self._check_access(Model, "read")
             records = Model.search(dom, offset=int(offset or 0), limit=lim,
                                    order=order or None)
             data = records.read(fields or [])
@@ -249,7 +262,7 @@ class AiAssistantTools(http.Controller):
             self._check_tool("orm_read")
             self._check_model(model)
             recs = request.env[model].browse(ids or [])
-            recs.check_access("read")
+            self._check_access(recs, "read")
             return {"records": recs.read(fields or [])}
 
         return self._run("orm_read", _do,
@@ -269,7 +282,7 @@ class AiAssistantTools(http.Controller):
             if method.startswith("_"):
                 raise ValidationError("Private methods are not callable.")
             Model = request.env[model]
-            Model.check_access("read")
+            self._check_access(Model, "read")
             result = getattr(Model, method)(*(args or []), **(kwargs or {}))
             # Recordsets aren't JSON serializable; surface ids.
             if hasattr(result, "_name") and hasattr(result, "ids"):
@@ -331,7 +344,7 @@ class AiAssistantTools(http.Controller):
             if not isinstance(values, dict):
                 raise ValidationError("values must be an object.")
             Model = request.env[model]
-            Model.check_access("create")
+            self._check_access(Model, "create")
             rec = Model.create(values)
             return {"ids": rec.ids}
 
@@ -349,7 +362,7 @@ class AiAssistantTools(http.Controller):
             if not isinstance(values, dict):
                 raise ValidationError("values must be an object.")
             recs = request.env[model].browse(ids or [])
-            recs.check_access("write")
+            self._check_access(recs, "write")
             recs.write(values)
             return {"written": len(recs), "ids": recs.ids}
 
@@ -366,7 +379,7 @@ class AiAssistantTools(http.Controller):
             self._check_tool("orm_unlink")
             self._check_model(model)
             recs = request.env[model].browse(ids or [])
-            recs.check_access("unlink")
+            self._check_access(recs, "unlink")
             count = len(recs)
             recs.unlink()
             return {"unlinked": count}
@@ -394,7 +407,7 @@ class AiAssistantTools(http.Controller):
                 raise ValidationError("kwargs must be an object.")
             Model = request.env[model]
             target = Model.browse(ids) if ids else Model
-            target.check_access("write")
+            self._check_access(target, "write")
             result = getattr(target, method)(*(args or []), **(kwargs or {}))
             return self._serialize_result(result)
 
@@ -423,7 +436,7 @@ class AiAssistantTools(http.Controller):
             if not Model._transient:
                 raise ValidationError(
                     "run_wizard only operates on transient (wizard) models.")
-            Model.check_access("create")
+            self._check_access(Model, "create")
             # create() merges default_get; the button then runs as the acting
             # user so real-model ACLs/record rules still apply inside it.
             wizard = Model.create(values or {})
@@ -453,7 +466,7 @@ class AiAssistantTools(http.Controller):
             self._check_model(target_model)
             Model = request.env[target_model]
             recs = Model.browse(ids or [])
-            (recs if ids else Model).check_access("write")
+            self._check_access(recs if ids else Model, "write")
             ctx = dict(request.env.context,
                        active_model=target_model,
                        active_ids=recs.ids,

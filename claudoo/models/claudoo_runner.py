@@ -21,7 +21,7 @@ from .claudoo_session import (
 _logger = logging.getLogger(__name__)
 
 SYSTEM_PROMPT = (
-    "You are an AI assistant embedded inside an Odoo 18 ERP system. "
+    "You are an AI assistant embedded inside an Odoo 17 ERP system. "
     "You help the current Odoo user query data and build reports. "
     "You act through the provided `mcp__odoo__*` tools — you have no shell access. "
     "Web access (WebFetch/WebSearch) is available only when the tool grant in the "
@@ -372,7 +372,11 @@ class AiAssistantRunner(models.AbstractModel):
     # ------------------------------------------------------------------
     def _emit(self, session, payload):
         payload = dict(payload, session_id=session.id)
-        session.user_id.partner_id._bus_send("claudoo", payload)
+        # Odoo 17 has no record-level ``_bus_send``; push to the user's partner
+        # channel via bus.bus._sendone (the frontend auto-listens on it and
+        # filters by the "claudoo" notification type).
+        self.env["bus.bus"]._sendone(
+            session.user_id.partner_id, "claudoo", payload)
 
     def _emit_message(self, session, rec):
         self._emit(session, {
