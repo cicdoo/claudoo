@@ -30,7 +30,7 @@ CLAUDE_CONFIG_DIR. Chatting is gated until the current user has connected.
     'category': 'Productivity/AI',
     'version': '17.0.1.0.0',
     'license': 'LGPL-3',
-    'depends': ['web', 'bus', 'mail'],
+    'depends': ['web', 'bus'],
     'external_dependencies': {'python': ['requests']},
     'data': [
         'security/claudoo_security.xml',
