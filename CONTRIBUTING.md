@@ -33,9 +33,65 @@ welcome — bug reports, documentation, tests, and code.
 
 ## Pull requests
 
-- One logical change per PR; write a clear description and link any issue.
-- Make sure CI is green (lint + tests).
-- Update `CHANGELOG.md` under an *Unreleased* heading.
+Open one logical change per PR with a clear description; link any issue
+(`Closes #123`). The items below are **enforced by CI and branch protection** — the
+merge button stays disabled until they pass:
+
+- **Changelog.** Add a bullet under the `## [Unreleased]` heading in
+  [`CHANGELOG.md`](CHANGELOG.md). (A maintainer can apply the `skip-changelog` label
+  for genuinely trivial PRs.)
+- **Security docs.** If your PR touches a safety-critical path —
+  `controllers/tools.py`, `controllers/main.py`, `models/ir_http.py`,
+  `models/*_session.py`, `models/*_tool.py`, `bridge/`, or `security/` — update
+  [`SECURITY.md`](SECURITY.md) to reflect the change (or have a maintainer apply the
+  `security-reviewed` label).
+- **Sign-off.** Every commit must be signed off — see *Developer Certificate of
+  Origin* below.
+- **Lint.** `flake8` must pass on the Python files you changed.
+- **Review.** At least one maintainer approval.
+
+There is no test job in CI, so run the suite locally before pushing:
+
+```bash
+odoo-bin ... -i claudoo --test-tags claudoo --stop-after-init
+```
+
+## AI-assisted contributions
+
+AI coding tools are welcome here — this project is itself an AI assistant. The bar is
+simply the same as for any other contribution:
+
+- **You are the author.** You are fully accountable for every line, AI-generated or
+  not. Only open PRs you understand and can explain; reviewers may ask how a change
+  works.
+- **Provenance.** AI can emit third-party or copyleft code verbatim. Submit only code
+  that is your original work, or that you otherwise have the right to license under
+  the terms in *Licensing of contributions* below. If you can't vouch for a snippet's
+  origin, don't include it.
+- **Never let AI weaken the security model.** Re-read [`SECURITY.md`](SECURITY.md).
+  Changes that introduce `sudo()` / superuser execution, broaden the SQL tool past
+  read-only `SELECT`, bypass `ir.model.access` or record rules, widen the bridge
+  token's scope, or re-enable denied CLI built-ins **will be rejected** — AI
+  assistants suggest these "helpfully" all the time. Keep the invariants and ship
+  tests that prove them.
+- **Verify.** Run the tests locally; never paste credentials, customer data, or
+  proprietary code into an AI tool while working on this project.
+- **Quality over volume.** Low-effort or bulk AI-generated PRs that don't meet the
+  bar may be closed without a detailed review.
+
+## Developer Certificate of Origin
+
+Contributions are accepted under the **Developer Certificate of Origin 1.1** (full
+text in the [`DCO`](DCO) file). Sign off every commit:
+
+```bash
+git commit -s -m "your message"
+```
+
+This appends a `Signed-off-by: Your Name <you@example.com>` trailer. Signing off
+certifies the DCO **and**, for this project, that any AI-assisted code in the commit
+is yours to license under the terms below. CI rejects unsigned commits; fix them with
+`git commit -s --amend` (one commit) or `git rebase --signoff origin/17.0` (several).
 
 ### Licensing of contributions (important)
 
