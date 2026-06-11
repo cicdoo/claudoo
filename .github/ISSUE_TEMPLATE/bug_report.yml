@@ -12,7 +12,7 @@ body:
     attributes:
       label: Versions
       description: Claudoo version, Odoo version, Claude Code CLI version, OS.
-      placeholder: "Claudoo 18.0.1.0.0, Odoo 18.0, CLI 2.1.x, Ubuntu 24.04"
+      placeholder: "Claudoo 18.0.1.0.1, Odoo 18.0, CLI 2.1.x, Ubuntu 24.04"
     validations:
       required: true
   - type: textarea
