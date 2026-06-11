@@ -41,8 +41,8 @@ class ResUsers(models.Model):
 
     # Pure status indicator computed from the presence of valid per-user
     # credentials on disk. No token material is ever exposed on the record.
-    ai_claude_oauth_set = fields.Boolean(
-        compute="_compute_ai_claude_oauth_set", string="Personal Claude Linked")
+    claudoo_oauth_set = fields.Boolean(
+        compute="_compute_claudoo_oauth_set", string="Personal Claude Linked")
 
     # --- Per-user AI tool permissions (manager-managed) ---
     claudoo_tool_ids = fields.Many2many(
@@ -50,7 +50,7 @@ class ResUsers(models.Model):
         string="AI Tools Allowed",
         help="Tools this user may invoke through the AI Assistant. "
              "Leave empty to allow all read-only tools.")
-    ai_zero_trust_mode = fields.Selection(
+    claudoo_zero_trust_mode = fields.Selection(
         [("inherit", "Inherit global default"),
          ("on", "Zero-trust (read-only)"),
          ("off", "Allow writes")],
@@ -61,11 +61,11 @@ class ResUsers(models.Model):
 
     @property
     def SELF_READABLE_FIELDS(self):
-        return super().SELF_READABLE_FIELDS + ["ai_claude_oauth_set"]
+        return super().SELF_READABLE_FIELDS + ["claudoo_oauth_set"]
 
-    def _compute_ai_claude_oauth_set(self):
+    def _compute_claudoo_oauth_set(self):
         for user in self:
-            user.ai_claude_oauth_set = bool(user.id) and user._ai_is_authenticated()
+            user.claudoo_oauth_set = bool(user.id) and user._ai_is_authenticated()
 
     # ------------------------------------------------------------------
     # Effective AI tool set (single source of truth, see claudoo.session)
@@ -83,8 +83,8 @@ class ResUsers(models.Model):
     def _ai_zero_trust(self):
         """Whether zero-trust (read-only) mode is active for this user."""
         self.ensure_one()
-        if self.ai_zero_trust_mode != "inherit":
-            return self.ai_zero_trust_mode == "on"
+        if self.claudoo_zero_trust_mode != "inherit":
+            return self.claudoo_zero_trust_mode == "on"
         raw = self.env["claudoo.session"]._config("zero_trust_default")
         return str2bool(raw, False) if raw is not None else False
 

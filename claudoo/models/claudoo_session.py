@@ -491,6 +491,20 @@ class AiAssistantSession(models.Model):
         body = (body or "").strip()
         if self.state == "running":
             raise UserError(_("The assistant is still working on the previous message."))
+        # Soft global cap on concurrent CLI runs to bound peak memory: each run is
+        # a separate `claude` subprocess (~hundreds of MB), so too many at once can
+        # OOM the host, especially with little/no swap. 0 (or empty) disables it.
+        # Soft because it counts committed `running` sessions, so simultaneous
+        # bursts may briefly exceed the cap; stale 'running' rows are reaped by the
+        # _cron_reap_stale cron, so a crashed run cannot wedge a slot permanently.
+        max_runs = int(self._config("max_concurrent_runs", 0) or 0)
+        if max_runs > 0:
+            active = self.search_count([("state", "=", "running")])
+            if active >= max_runs:
+                raise UserError(_(
+                    "The AI assistant is busy right now (%(active)s of %(max)s runs "
+                    "in progress). Please wait a moment and send your message again.",
+                    active=active, max=max_runs))
         if not self.user_id.sudo()._ai_is_authenticated():
             raise UserError(_(
                 "You need to connect your Claude account before chatting. "

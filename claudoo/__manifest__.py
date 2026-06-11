@@ -28,9 +28,9 @@ CLAUDE_CONFIG_DIR. Chatting is gated until the current user has connected.
     'author': "CICDoo",
     'website': "https://cicdoo.com",
     'category': 'Productivity/AI',
-    'version': '18.0.1.0.0',
+    'version': '18.0.1.0.1',
     'license': 'LGPL-3',
-    'depends': ['web', 'bus', 'mail'],
+    'depends': ['web', 'bus'],
     'external_dependencies': {'python': ['requests']},
     'data': [
         'security/claudoo_security.xml',

@@ -4,6 +4,29 @@ All notable changes to **Claudoo** are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 Odoo-style versioning (`18.0.MAJOR.MINOR.PATCH`).
 
+## [18.0.1.0.1] — 2026-06-11
+
+### Added
+- **Max Concurrent Runs** setting (`claudoo.max_concurrent_runs`, under
+  *Settings → Claudoo AI Assistant*) — a soft global cap on how many CLI
+  subprocesses may run at once across all users, to bound peak memory and
+  protect the host from OOM. `0` = unlimited.
+
+### Changed
+- **Namespaced all `res.config.settings` and `res.users` fields** from the
+  generic `ai_*` prefix to `claudoo_*`, matching the module's own
+  `claudoo_tool_ids` and removing any overlap with sibling modules on these
+  shared models (notably the previously shared `res.users` zero-trust column).
+  A pre-migration (`18.0.1.0.1`) preserves each user's zero-trust selection
+  across the rename. Field *labels* and behaviour are unchanged.
+- **Dropped the unused `mail` dependency** — the addon drives `web` and `bus`
+  directly and never used any `mail` feature; `depends` is now `['web', 'bus']`.
+
+### Removed
+- GitHub Actions CI workflow and tracked `__pycache__/*.pyc` build artifacts.
+
+[18.0.1.0.1]: https://github.com/cicdoo/claudoo/releases/tag/18.0.1.0.1
+
 ## [18.0.1.0.0] — First public release
 
 First open-source release of Claudoo, an in-Odoo AI assistant that drives the
