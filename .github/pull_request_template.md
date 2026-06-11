@@ -13,7 +13,10 @@
 
 - [ ] Targets Odoo 18.0 and follows the existing code style
 - [ ] Added/updated tests under `tests/` (tagged `claudoo`) and they pass locally
-- [ ] Updated `CHANGELOG.md`
+- [ ] Updated `CHANGELOG.md` (bullet under `## [Unreleased]`)
+- [ ] Updated `SECURITY.md` if this touches a safety-critical path (else N/A)
+- [ ] All commits are signed off (`git commit -s` → DCO)
+- [ ] I am the author and have reviewed/understand **all** code here, including any AI-assisted parts, and it is mine to license
 - [ ] Tool endpoints still run **as the user, never superuser**
 - [ ] Did not alter Claude/Anthropic engine references (OAuth, `CLAUDE_CONFIG_DIR`,
       CLI glob, `claude_session_id` / `claude_msg_id`)

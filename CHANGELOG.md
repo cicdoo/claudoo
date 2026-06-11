@@ -2,7 +2,16 @@
 
 All notable changes to **Claudoo** are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
-Odoo-style versioning (`18.0.MAJOR.MINOR.PATCH`).
+Odoo-style versioning (`18.0.MAJOR.MINOR.PATCH`). Add new entries under
+`## [Unreleased]`; a maintainer assigns the version at release time.
+
+## [Unreleased]
+
+### Added
+- **Contribution gates** — a `pr-checks` CI workflow (CHANGELOG, DCO sign-off,
+  SECURITY.md-when-relevant, flake8) plus branch protection, and `CONTRIBUTING.md`
+  guidance covering AI-assisted contributions and the Developer Certificate of
+  Origin (`DCO`).
 
 ## [18.0.1.0.1] — 2026-06-11
 
