@@ -12,7 +12,7 @@
 ## Checklist
 
 - [ ] Targets Odoo 18.0 and follows the existing code style
-- [ ] Added/updated tests under `tests/` (tagged `claudoo`); CI is green
+- [ ] Added/updated tests under `tests/` (tagged `claudoo`) and they pass locally
 - [ ] Updated `CHANGELOG.md`
 - [ ] Tool endpoints still run **as the user, never superuser**
 - [ ] Did not alter Claude/Anthropic engine references (OAuth, `CLAUDE_CONFIG_DIR`,
