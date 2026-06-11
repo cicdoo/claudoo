@@ -16,6 +16,7 @@ superuser, with a full audit trail.**
 
 [![License: LGPL-3.0](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](LICENSE)
 [![Odoo](https://img.shields.io/badge/Odoo-18.0-714B67.svg)](https://www.odoo.com)
+[![PR checks](https://github.com/cicdoo/claudoo/actions/workflows/pr-checks.yml/badge.svg)](https://github.com/cicdoo/claudoo/actions/workflows/pr-checks.yml)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 [Quick start](#-quick-start) · [Security model](#-security-model) ·
