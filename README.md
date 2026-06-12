@@ -15,7 +15,7 @@ queries your data, and builds reports — running as the logged-in user, never a
 superuser, with a full audit trail.**
 
 [![License: LGPL-3.0](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](LICENSE)
-[![Odoo](https://img.shields.io/badge/Odoo-18.0-714B67.svg)](https://www.odoo.com)
+[![Odoo](https://img.shields.io/badge/Odoo-17.0-714B67.svg)](https://www.odoo.com)
 [![PR checks](https://github.com/cicdoo/claudoo/actions/workflows/pr-checks.yml/badge.svg)](https://github.com/cicdoo/claudoo/actions/workflows/pr-checks.yml)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
@@ -75,7 +75,7 @@ OWL chat UI ──/claudoo/send (auth=user)──► Odoo worker ──► daemo
 
 ### Requirements
 
-- **Odoo 18.0**
+- **Odoo 17.0**
 - The **[Claude Code CLI](https://docs.claude.com/en/docs/claude-code)** installed
   on the Odoo server (Claudoo auto-detects the binary; the path is configurable).
 - Python **`requests`** (declared as an external dependency).

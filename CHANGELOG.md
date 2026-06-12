@@ -13,6 +13,11 @@ the version at release time.
   guidance covering AI-assisted contributions and the Developer Certificate of
   Origin (`DCO`).
 
+### Fixed
+- Corrected stale **Odoo 18.0** references in the project docs (README badge +
+  requirements, `CONTRIBUTING.md`, `SECURITY.md`, and the issue/PR templates) to
+  **Odoo 17.0**, matching this branch.
+
 ## [17.0.1.0.1] — 2026-06-10
 
 ### Added

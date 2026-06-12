@@ -7,7 +7,7 @@ security seriously and welcome responsible disclosure.
 
 | Version  | Supported |
 |----------|-----------|
-| 18.0.x   | ✅        |
+| 17.0.x   | ✅        |
 
 ## Reporting a vulnerability
 
