@@ -7,6 +7,9 @@ Odoo-style versioning (`18.0.MAJOR.MINOR.PATCH`). Add new entries under
 
 ## [Unreleased]
 
+### Notes
+- CI gate self-test (this PR is a throwaway and will be closed, not merged).
+
 ### Added
 - **Contribution gates** — a `pr-checks` CI workflow (CHANGELOG, DCO sign-off,
   SECURITY.md-when-relevant, flake8) plus branch protection, and `CONTRIBUTING.md`
