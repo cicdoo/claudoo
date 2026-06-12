@@ -41,7 +41,7 @@ jobs:
           set -euo pipefail
           git fetch --no-tags origin "${{ github.base_ref }}"
           fail=0
-          for sha in $(git rev-list "origin/${{ github.base_ref }}..HEAD"); do
+          for sha in $(git rev-list --no-merges "origin/${{ github.base_ref }}..HEAD"); do
             if ! git log -1 --format='%(trailers:key=Signed-off-by)' "$sha" | grep -qiE '<.+@.+>'; then
               subject=$(git log -1 --format='%s' "$sha")
               echo "::error::Commit $sha (\"$subject\") is missing a Signed-off-by line."
