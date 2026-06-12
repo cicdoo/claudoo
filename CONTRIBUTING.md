@@ -16,7 +16,7 @@ welcome — bug reports, documentation, tests, and code.
 
 ## Development guidelines
 
-- **Target Odoo 18.0.** Match the surrounding code style (PEP 8, 4-space indent,
+- **Target Odoo 17.0.** Match the surrounding code style (PEP 8, 4-space indent,
   `# -*- coding: utf-8 -*-` headers).
 - **Security first.** Claudoo's whole value is its safety model. Any change that
   touches the tool endpoints, the SQL guard, the bridge token, or the auth method
