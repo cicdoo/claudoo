@@ -147,6 +147,32 @@
         }
     }
 
+    // Inline card: opens a chart/report in the artifact panel on the right.
+    .o_ai_artifact_card {
+        width: 100%;
+        max-width: 360px;
+        text-align: left;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        background-color: #fff;
+        padding: 8px 12px;
+        margin: .25rem 0;
+        color: #212529;
+
+        &:hover {
+            background-color: #f1f3f5;
+            border-color: #ced4da;
+        }
+        .fa-area-chart { color: #714b67; }
+    }
+
+    // Collapsed-by-default tool calls.
+    .o_ai_tools_toggle {
+        color: #6c757d;
+
+        &:hover { color: #212529; }
+    }
+
     .o_ai_tool_chip {
         background-color: #eef2f7;
         border-radius: 10px;
@@ -177,5 +203,32 @@
     .o_ai_composer_input {
         resize: none;
         max-height: 200px;
+    }
+
+    // Artifact panel: rendered charts/reports on the far right.
+    .o_ai_artifact {
+        width: 42%;
+        min-width: 360px;
+        max-width: 760px;
+        background-color: #fff;
+
+        .o_ai_artifact_header {
+            background-color: #f8f9fa;
+            color: #555;
+
+            .btn-link {
+                color: #6c757d;
+                text-decoration: none;
+
+                &:hover { color: #212529; }
+            }
+        }
+
+        .o_ai_report_frame {
+            display: block;
+            width: 100%;
+            border: 0;
+            min-height: 160px;
+        }
     }
 }
