@@ -71,7 +71,8 @@
 
             <!-- Main: messages + composer -->
             <div class="o_ai_main d-flex flex-column flex-grow-1">
-                <AiMessageList messages="state.messages" running="state.running"/>
+                <AiMessageList messages="state.messages" running="state.running"
+                               onOpenArtifact.bind="openArtifact"/>
                 <div t-if="state.running" class="px-2 pb-1">
                     <button class="btn btn-sm btn-link text-danger" t-on-click="onStop">
                         <i class="fa fa-stop me-1"/> Stop
@@ -79,6 +80,26 @@
                 </div>
                 <AiComposer onSend.bind="onSend" disabled="state.running"
                             sessionId="state.currentId"/>
+            </div>
+
+            <!-- Artifact panel: rendered charts/reports, on the far right -->
+            <div t-if="state.artifactOpen and state.artifact"
+                 class="o_ai_artifact d-flex flex-column border-start">
+                <div class="o_ai_artifact_header d-flex align-items-center px-3 py-2 border-bottom">
+                    <i class="fa fa-area-chart me-2"/>
+                    <span class="fw-bold">Preview</span>
+                    <button class="btn btn-sm btn-link ms-auto p-0 me-2"
+                            title="Open in new tab" t-on-click="openArtifactNewTab">
+                        <i class="fa fa-external-link"/>
+                    </button>
+                    <button class="btn btn-sm btn-link p-0" title="Close"
+                            t-on-click="closeArtifact">
+                        <i class="fa fa-times"/>
+                    </button>
+                </div>
+                <div class="o_ai_artifact_body flex-grow-1 overflow-auto p-3">
+                    <ReportFrame html="state.artifact"/>
+                </div>
             </div>
         </div>
     </t>

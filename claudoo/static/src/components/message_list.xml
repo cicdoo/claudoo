@@ -13,7 +13,7 @@
                 </div>
             </t>
             <t t-foreach="props.messages" t-as="msg" t-key="msg.id">
-                <AiMessage message="msg"/>
+                <AiMessage message="msg" onOpenArtifact="props.onOpenArtifact"/>
             </t>
             <div t-if="props.running" class="o_ai_typing small text-muted">
                 <i class="fa fa-spinner fa-spin me-1"/> Assistant is working…

@@ -2,26 +2,70 @@
 // Copyright 2026 CICDoo (https://cicdoo.com)
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Claudoo-Commercial
 // Dual-licensed: open source (LGPL-3, see LICENSE) or commercial (see COMMERCIAL_LICENSE.md).
-import { Component } from "@odoo/owl";
+import { Component, useState } from "@odoo/owl";
 import { renderMarkdown } from "../markdown";
+import { splitSegments } from "../artifacts";
 
 export class AiMessage extends Component {
     static template = "claudoo.Message";
-    static props = { message: Object };
+    static props = {
+        message: Object,
+        // Called with an HTML string to display it in the artifact panel.
+        onOpenArtifact: { type: Function, optional: true },
+    };
+
+    setup() {
+        // Tool calls are collapsed by default; this toggles the per-message view.
+        this.ui = useState({ toolsOpen: false });
+    }
 
     get roleLabel() {
-        return { user: "You", assistant: "Assistant", error: "Error" }[
+        return { user: "You", assistant: "Assistant", report: "Report", error: "Error" }[
             this.props.message.role
         ] || this.props.message.role;
     }
 
-    // Render assistant/error markdown to HTML; keep user messages as plain text.
-    get bodyHtml() {
-        return renderMarkdown(this.props.message.body || "");
+    get isReport() {
+        return this.props.message.role === "report";
+    }
+
+    // Ordered render segments for non-user messages: markdown chunks (rendered
+    // to safe HTML) interleaved with embedded HTML chunks shown as a card that
+    // opens the artifact panel. A report-role message is a single HTML segment.
+    // User messages stay plain text and don't use this.
+    get segments() {
+        const body = this.props.message.body || "";
+        if (this.isReport) {
+            return [{ type: "html", html: body }];
+        }
+        const out = [];
+        for (const seg of splitSegments(body)) {
+            if (!seg.text.trim()) {
+                continue;
+            }
+            out.push(seg.type === "html"
+                ? { type: "html", html: seg.text }
+                : { type: "md", html: renderMarkdown(seg.text) });
+        }
+        return out;
+    }
+
+    openArtifact(html) {
+        this.props.onOpenArtifact?.(html);
     }
 
     get toolCalls() {
         return this.props.message.tool_calls || [];
+    }
+
+    toggleTools() {
+        this.ui.toolsOpen = !this.ui.toolsOpen;
+    }
+
+    // True while at least one tool call is still running.
+    get toolsBusy() {
+        return this.toolCalls.some(
+            (c) => c.status !== "done" && c.status !== "error");
     }
 
     get attachments() {

@@ -10,14 +10,24 @@
                 <t t-esc="roleLabel"/>
             </div>
 
-            <!-- Tool call chips -->
+            <!-- Tool calls: collapsed by default behind a toggle -->
             <t t-if="toolCalls.length">
                 <div class="o_ai_tools mb-1">
-                    <div t-foreach="toolCalls" t-as="call" t-key="call.id"
-                         class="o_ai_tool_chip d-flex align-items-center small">
-                        <i t-attf-class="fa {{statusIcon(call)}} me-1"/>
-                        <span class="fw-bold me-1" t-esc="call.name"/>
-                        <span class="text-muted text-truncate" t-esc="summarizeInput(call)"/>
+                    <button type="button"
+                            class="o_ai_tools_toggle btn btn-sm btn-link p-0 d-flex align-items-center small text-muted text-decoration-none"
+                            t-on-click="toggleTools">
+                        <i t-attf-class="fa {{ ui.toolsOpen ? 'fa-caret-down' : 'fa-caret-right' }} me-1"/>
+                        <i t-if="toolsBusy" class="fa fa-spinner fa-spin me-1"/>
+                        <i t-else="" class="fa fa-wrench me-1"/>
+                        <span t-esc="toolCalls.length + (toolCalls.length === 1 ? ' tool call' : ' tool calls')"/>
+                    </button>
+                    <div t-if="ui.toolsOpen" class="o_ai_tools_list mt-1">
+                        <div t-foreach="toolCalls" t-as="call" t-key="call.id"
+                             class="o_ai_tool_chip d-flex align-items-center small">
+                            <i t-attf-class="fa {{statusIcon(call)}} me-1"/>
+                            <span class="fw-bold me-1" t-esc="call.name"/>
+                            <span class="text-muted text-truncate" t-esc="summarizeInput(call)"/>
+                        </div>
                     </div>
                 </div>
             </t>
@@ -33,11 +43,25 @@
                 </div>
             </t>
 
-            <!-- Body: render markdown for the assistant, plain text for the user -->
+            <!-- Body: plain text for the user; otherwise ordered segments where
+                 embedded HTML (e.g. a CSS/SVG chart) becomes a card that opens
+                 the artifact panel, and the rest renders as markdown. -->
             <t t-if="props.message.body">
                 <div t-if="props.message.role === 'user'"
                      class="o_ai_msg_body o_ai_msg_plain" t-esc="props.message.body"/>
-                <div t-else="" class="o_ai_msg_body o_ai_md" t-out="bodyHtml"/>
+                <t t-else="">
+                    <t t-foreach="segments" t-as="seg" t-key="seg_index">
+                        <button t-if="seg.type === 'html'" type="button"
+                                class="o_ai_artifact_card d-flex align-items-center"
+                                t-on-click="() => this.openArtifact(seg.html)">
+                            <i class="fa fa-area-chart me-2"/>
+                            <span class="fw-bold me-2">Chart</span>
+                            <span class="text-muted small">Click to view</span>
+                            <i class="fa fa-chevron-right ms-auto"/>
+                        </button>
+                        <div t-else="" class="o_ai_msg_body o_ai_md" t-out="seg.html"/>
+                    </t>
+                </t>
             </t>
         </div>
     </t>

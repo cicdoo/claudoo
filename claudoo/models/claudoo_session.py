@@ -534,6 +534,27 @@ class AiAssistantSession(models.Model):
         self.env["claudoo.runner"]._launch(self, prompt, is_first, token)
         return {"message_id": user_msg.id, "session_id": self.id}
 
+    def _post_report(self, html):
+        """Create a ``report``-role message holding raw report HTML and push it
+        to the live chat.
+
+        ``html`` is rendered in the OWL UI inside a sandboxed iframe (scripts
+        blocked, styles isolated), so it may be a full HTML document — e.g. the
+        output of ``ir.actions.report._render_qweb_html``. Reuses the runner's
+        bus broadcast so an open chat updates immediately, just like streamed
+        assistant messages.
+
+        Returns the created ``claudoo.message`` record.
+        """
+        self.ensure_one()
+        rec = self.env["claudoo.message"].create({
+            "session_id": self.id,
+            "role": "report",
+            "body": html or "",
+        })
+        self.env["claudoo.runner"]._emit_message(self, rec)
+        return rec
+
     def _build_prompt(self, body, paths):
         """Append an attachment manifest to the user's text so the model knows
         which uploaded files it can open with the Read tool."""
