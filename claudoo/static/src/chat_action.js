@@ -8,10 +8,12 @@ import { useService } from "@web/core/utils/hooks";
 import { rpc } from "@web/core/network/rpc";
 import { AiMessageList } from "./components/message_list";
 import { AiComposer } from "./components/composer";
+import { ReportFrame } from "./components/report_frame";
+import { extractHtmlBlocks } from "./artifacts";
 
 export class AiChatAction extends Component {
     static template = "claudoo.ChatAction";
-    static components = { AiMessageList, AiComposer };
+    static components = { AiMessageList, AiComposer, ReportFrame };
     static props = ["*"];
 
     setup() {
@@ -28,6 +30,9 @@ export class AiChatAction extends Component {
             authStep: "idle", // "idle" -> "awaiting_code" -> "exchanging"
             authError: "",
             authCode: "",
+            // Artifact panel (right side): rendered chart/report HTML.
+            artifact: null,
+            artifactOpen: false,
         });
 
         onWillStart(async () => {
@@ -112,6 +117,66 @@ export class AiChatAction extends Component {
         const data = await rpc("/claudoo/messages", { session_id: id });
         this.state.messages = data.messages;
         this.state.running = data.state === "running";
+        // Surface this conversation's most recent chart/report on the right.
+        this.state.artifact = null;
+        this.state.artifactOpen = false;
+        this._captureLatestArtifact();
+    }
+
+    // ------------------------------------------------------------------
+    // Artifact panel
+    // ------------------------------------------------------------------
+    openArtifact(html) {
+        this.state.artifact = html;
+        this.state.artifactOpen = true;
+    }
+
+    closeArtifact() {
+        this.state.artifactOpen = false;
+    }
+
+    openArtifactNewTab() {
+        if (!this.state.artifact) {
+            return;
+        }
+        const blob = new Blob([this.state.artifact], { type: "text/html" });
+        const url = URL.createObjectURL(blob);
+        window.open(url, "_blank", "noopener,noreferrer");
+        setTimeout(() => URL.revokeObjectURL(url), 60000);
+    }
+
+    // The HTML to show for a message, or null if it carries none.
+    _messageArtifact(msg) {
+        if (!msg) {
+            return null;
+        }
+        if (msg.role === "report") {
+            return msg.body || null;
+        }
+        if (msg.role === "assistant") {
+            const blocks = extractHtmlBlocks(msg.body || "");
+            return blocks.length ? blocks[blocks.length - 1] : null;
+        }
+        return null;
+    }
+
+    // Auto-open the chart/report from a freshly streamed message.
+    _maybeCaptureArtifact(msg) {
+        const html = this._messageArtifact(msg);
+        if (html) {
+            this.openArtifact(html);
+        }
+    }
+
+    // Scan history (newest first) and open the latest artifact, if any.
+    _captureLatestArtifact() {
+        for (let i = this.state.messages.length - 1; i >= 0; i--) {
+            const html = this._messageArtifact(this.state.messages[i]);
+            if (html) {
+                this.openArtifact(html);
+                return;
+            }
+        }
     }
 
     _upsertMessage(msg) {
@@ -130,6 +195,7 @@ export class AiChatAction extends Component {
                 break;
             case "message":
                 this._upsertMessage(p.message);
+                this._maybeCaptureArtifact(p.message);
                 break;
             case "done":
                 this.state.running = false;

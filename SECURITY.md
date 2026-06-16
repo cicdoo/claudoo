@@ -39,7 +39,14 @@ are in scope for security reports include:
   through the `mcp__odoo__*` tools.
 - **Per-user credential isolation** — OAuth credentials are stored per user with
   mode `0600` and never exposed on a record.
+- **Sandboxed report/chart rendering** — HTML the model emits (charts, reports,
+  and `claudoo.session._post_report` output) is rendered in an
+  `<iframe sandbox="allow-same-origin">` **without** `allow-scripts`, so its own
+  scripts never execute and its styles are isolated from the Odoo UI; the parent
+  only reads the frame to size it. `allow-scripts` is deliberately never combined
+  with `allow-same-origin` (that pairing lets a frame drop its own sandbox).
 
 If you find a way to (a) escalate beyond the acting user's ACLs, (b) mutate data
-through `sql_select`, (c) forge or replay a bridge token, or (d) make the model
-reach a denied built-in, that is a security bug — please report it.
+through `sql_select`, (c) forge or replay a bridge token, (d) make the model
+reach a denied built-in, or (e) execute script or escape the iframe sandbox via
+rendered model HTML, that is a security bug — please report it.

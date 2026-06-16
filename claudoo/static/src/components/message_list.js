@@ -8,7 +8,11 @@ import { AiMessage } from "./message";
 export class AiMessageList extends Component {
     static template = "claudoo.MessageList";
     static components = { AiMessage };
-    static props = { messages: Array, running: Boolean };
+    static props = {
+        messages: Array,
+        running: Boolean,
+        onOpenArtifact: { type: Function, optional: true },
+    };
 
     setup() {
         this.scrollRef = useRef("scroll");

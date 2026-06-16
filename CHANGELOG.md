@@ -8,10 +8,25 @@ Odoo-style versioning (`18.0.MAJOR.MINOR.PATCH`). Add new entries under
 ## [Unreleased]
 
 ### Added
+- **Rendered charts & HTML reports in chat** — the assistant can now produce
+  visual output instead of raw markup. HTML emitted in a fenced ` ```html `
+  block (or an untagged fence whose content is HTML) renders as a CSS/SVG chart
+  or report inside a **sandboxed iframe** (`sandbox="allow-same-origin"`, no
+  scripts — styles are isolated and the markup's own JS never runs). Rendered
+  output opens in a dedicated **artifact panel on the right**, with the latest
+  chart auto-opening and inline "Chart" cards to reopen any previous one. A new
+  `report` message role plus a `claudoo.session._post_report(html)` helper let
+  server-side code push a full report straight into the conversation.
+
 - **Contribution gates** — a `pr-checks` CI workflow (CHANGELOG, DCO sign-off,
   SECURITY.md-when-relevant, flake8) plus branch protection, and `CONTRIBUTING.md`
   guidance covering AI-assisted contributions and the Developer Certificate of
   Origin (`DCO`).
+
+### Changed
+- **Tool calls are collapsed by default** in each assistant message, behind a
+  toggle that shows the call count (and a spinner while any call is still
+  running); expand to see the per-tool chips.
 
 ## [18.0.1.0.1] — 2026-06-11
 
