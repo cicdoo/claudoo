@@ -105,15 +105,36 @@ class PartnerLedgerReportWizard(models.TransientModel):
             )
         """.format(base_where=base_where)
 
-        # 1. Opening balance line per partner (partners with no prior activity get 0).
-        cr.execute(cte + """
+        period_cte = """
+            , period AS (
+                SELECT
+                    aml.partner_id AS partner_id,
+                    SUM(aml.debit) AS debit,
+                    SUM(aml.credit) AS credit,
+                    SUM(aml.balance) AS balance
+                FROM account_move_line aml
+                JOIN account_move am ON am.id = aml.move_id
+                JOIN account_account aa ON aa.id = aml.account_id
+                WHERE {base_where}
+                AND aml.date BETWEEN %(date_from)s AND %(date_to)s
+                GROUP BY aml.partner_id
+            )
+        """.format(base_where=base_where)
+
+        cte_with_period = cte + period_cte
+
+        # 1. Opening balance line per partner, for every partner that appears
+        # either in the opening balance or in the period (partners with no
+        # prior activity get a 0 opening line instead of no line at all).
+        cr.execute(cte_with_period + """
             INSERT INTO partner_ledger_report_line
                 (wizard_id, partner_id, line_type, sequence, debit, credit, balance, create_date, create_uid)
             SELECT
-                %(wizard_id)s, opening.partner_id, 'opening', 0,
-                opening.debit, opening.credit, opening.balance,
+                %(wizard_id)s, COALESCE(opening.partner_id, period.partner_id), 'opening', 0,
+                COALESCE(opening.debit, 0), COALESCE(opening.credit, 0), COALESCE(opening.balance, 0),
                 now(), %(uid)s
             FROM opening
+            FULL OUTER JOIN period ON period.partner_id = opening.partner_id
         """, {**params, 'uid': self.env.uid})
 
         # 2. Detail lines within [date_from, date_to] with the running balance
@@ -140,20 +161,7 @@ class PartnerLedgerReportWizard(models.TransientModel):
 
         # 3. Closing balance line per partner = opening + period debit/credit,
         # for every partner that appears either in the opening balance or in the period.
-        cr.execute(cte + """
-            , period AS (
-                SELECT
-                    aml.partner_id AS partner_id,
-                    SUM(aml.debit) AS debit,
-                    SUM(aml.credit) AS credit,
-                    SUM(aml.balance) AS balance
-                FROM account_move_line aml
-                JOIN account_move am ON am.id = aml.move_id
-                JOIN account_account aa ON aa.id = aml.account_id
-                WHERE {base_where}
-                AND aml.date BETWEEN %(date_from)s AND %(date_to)s
-                GROUP BY aml.partner_id
-            )
+        cr.execute(cte_with_period + """
             INSERT INTO partner_ledger_report_line
                 (wizard_id, partner_id, line_type, sequence, debit, credit, balance, create_date, create_uid)
             SELECT
@@ -166,7 +174,7 @@ class PartnerLedgerReportWizard(models.TransientModel):
                 now(), %(uid)s
             FROM opening
             FULL OUTER JOIN period ON period.partner_id = opening.partner_id
-        """.format(base_where=base_where), {**params, 'uid': self.env.uid})
+        """, {**params, 'uid': self.env.uid})
 
         self.invalidate_recordset(['line_ids'])
 
