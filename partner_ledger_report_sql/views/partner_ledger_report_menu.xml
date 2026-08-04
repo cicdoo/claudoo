@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_partner_ledger_report_sql"
+              name="Partner Ledger (SQL)"
+              action="action_partner_ledger_report_wizard"
+              parent="account.account_reports_partners_reports_menu"
+              groups="account.group_account_invoice"
+              sequence="15"/>
+</odoo>
