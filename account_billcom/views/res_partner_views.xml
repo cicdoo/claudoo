@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_form_inherit_billcom" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.billcom</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='sales_purchases']" position="inside">
+                <group string="Bill.com" name="billcom" invisible="supplier_rank &lt;= 0">
+                    <field name="billcom_vendor_id"/>
+                    <field name="billcom_sync_state"/>
+                    <field name="billcom_sync_error" invisible="billcom_sync_state != 'error'"/>
+                    <button name="action_billcom_sync_vendor"
+                            type="object"
+                            string="Sync to Bill.com"
+                            class="btn-link"
+                            icon="fa-cloud-upload"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

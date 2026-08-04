@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.account.billcom</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <setting id="account_batch_payment" position="after">
+                <setting id="billcom_settings" string="Bill.com" help="Sync vendor bills and payment status with Bill.com."
+                         company_dependent="1">
+                    <field name="billcom_enabled"/>
+                    <div class="content-group" invisible="not billcom_enabled">
+                        <div class="row mt16">
+                            <label string="Environment" for="billcom_environment" class="col-lg-3 o_light_label"/>
+                            <field name="billcom_environment"/>
+                        </div>
+                        <div class="row">
+                            <label string="Developer Key" for="billcom_dev_key" class="col-lg-3 o_light_label"/>
+                            <field name="billcom_dev_key" password="True"/>
+                        </div>
+                        <div class="row">
+                            <label string="Username" for="billcom_username" class="col-lg-3 o_light_label"/>
+                            <field name="billcom_username"/>
+                        </div>
+                        <div class="row">
+                            <label string="Password" for="billcom_password" class="col-lg-3 o_light_label"/>
+                            <field name="billcom_password" password="True"/>
+                        </div>
+                        <div class="row">
+                            <label string="Organization ID" for="billcom_organization_id" class="col-lg-3 o_light_label"/>
+                            <field name="billcom_organization_id"/>
+                        </div>
+                        <div class="mt16">
+                            <button name="action_billcom_test_connection" type="object" class="btn-link">
+                                <i title="Test connection" role="img" aria-label="Test connection" class="fa fa-plug fa-fw"/>
+                                Test Connection
+                            </button>
+                        </div>
+                    </div>
+                </setting>
+            </setting>
+        </field>
+    </record>
+</odoo>

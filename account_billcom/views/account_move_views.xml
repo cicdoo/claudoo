@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_move_form_inherit_billcom" model="ir.ui.view">
+        <field name="name">account.move.form.inherit.billcom</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_billcom_send_bill"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-cloud-upload"
+                        invisible="move_type not in ('in_invoice', 'in_refund') or state != 'posted' or billcom_bill_id">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">Send to Bill.com</span>
+                    </div>
+                </button>
+                <button name="action_billcom_send_bill"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-bank"
+                        invisible="not billcom_bill_id">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text"><field name="billcom_payment_status"/></span>
+                        <span class="o_stat_text">Bill.com Status</span>
+                    </div>
+                </button>
+            </xpath>
+            <xpath expr="//field[@name='ref']" position="after">
+                <field name="billcom_sync_state" invisible="move_type not in ('in_invoice', 'in_refund')"/>
+                <field name="billcom_sync_error" invisible="billcom_sync_state != 'error'"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
