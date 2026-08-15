@@ -43,7 +43,7 @@ class VibecoderGithubOauth(http.Controller):
             "scope": "repo",
             "state": state,
         }
-        return request.redirect("%s?%s" % (GITHUB_AUTHORIZE_URL, urlencode(params)))
+        return request.redirect("%s?%s" % (GITHUB_AUTHORIZE_URL, urlencode(params)), local=False)
 
     @http.route("/vibecoder/github/callback", type="http", auth="public", csrf=False)
     def callback(self, code=None, state=None, **kw):
