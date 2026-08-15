@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_vibecoder_github_account_system,vibecoder.github_account system,model_vibecoder_github_account,base.group_system,1,1,1,1
+access_vibecoder_project_system,vibecoder.project system,model_vibecoder_project,base.group_system,1,1,1,1
+access_vibecoder_session_system,vibecoder.session system,model_vibecoder_session,base.group_system,1,1,1,1
+access_vibecoder_message_system,vibecoder.message system,model_vibecoder_message,base.group_system,1,1,1,1
+access_vibecoder_login_attempt_system,vibecoder.login_attempt system,model_vibecoder_login_attempt,base.group_system,1,1,1,1

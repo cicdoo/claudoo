@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_vibecoder" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.vibecoder</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Vibecoder" string="Vibecoder" name="vibecoder">
+                    <block title="GitHub" name="vibecoder_github">
+                        <setting string="GitHub OAuth Client ID"
+                                 help="Register an OAuth App at github.com/settings/developers with callback URL https://&lt;this-instance-domain&gt;/vibecoder/github/callback">
+                            <field name="vibecoder_github_client_id"/>
+                        </setting>
+                        <setting string="GitHub OAuth Client Secret">
+                            <field name="vibecoder_github_client_secret" password="True"/>
+                        </setting>
+                    </block>
+
+                    <block title="Claude" name="vibecoder_claude">
+                        <setting string="Vibecoder Claude CLI Path">
+                            <field name="vibecoder_cli_path"/>
+                        </setting>
+                        <setting string="Model">
+                            <field name="vibecoder_model"/>
+                        </setting>
+                        <setting string="Max Turns per Message">
+                            <field name="vibecoder_max_turns"/>
+                        </setting>
+                        <setting string="Vibecoder Run Timeout (s)">
+                            <field name="vibecoder_timeout_s"/>
+                        </setting>
+                        <setting string="Max Concurrent Claude Runs">
+                            <field name="vibecoder_max_concurrent_claude_runs"/>
+                        </setting>
+                    </block>
+
+                    <block title="Previews" name="vibecoder_previews">
+                        <setting string="Max Concurrent Previews">
+                            <field name="vibecoder_max_concurrent_previews"/>
+                        </setting>
+                        <setting string="Preview Port Range">
+                            <field name="vibecoder_preview_port_range"/>
+                        </setting>
+                    </block>
+
+                    <block title="Storage" name="vibecoder_storage">
+                        <setting string="Project Workspace Root">
+                            <field name="vibecoder_workspace_root"/>
+                        </setting>
+                        <setting string="Per-Partner Claude Home Root">
+                            <field name="vibecoder_home_root"/>
+                        </setting>
+                        <setting string="Vibecoder Max Upload Size (MB)">
+                            <field name="vibecoder_max_upload_mb"/>
+                        </setting>
+                        <setting string="Upload Chunk Size (MB)">
+                            <field name="vibecoder_upload_chunk_mb"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>
