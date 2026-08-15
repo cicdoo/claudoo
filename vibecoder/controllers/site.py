@@ -133,11 +133,13 @@ class VibecoderSite(http.Controller):
             '<button onclick="vcCompleteClaude()">Confirm</button></div>'
             '</div>'
         )
+        banner_html = (
+            '<div class="vc-container" style="max-width:100%%;padding:16px">%s</div>' % claude_banner
+        ) if claude_banner else ""
         body = """
+        <div class="vc-page">
         %s
-        <div class="vc-container" style="max-width:100%%;padding:16px">
-            %s
-        </div>
+        %s
         <div class="vc-workspace">
             <div class="vc-chat-pane">
                 <div class="vc-messages" id="vc-messages"></div>
@@ -154,6 +156,7 @@ class VibecoderSite(http.Controller):
                 </div>
                 <iframe id="vc-preview-frame"></iframe>
             </div>
+        </div>
         </div>
         <script src="/vibecoder/static/src/js/workspace.js"></script>
         <script>
@@ -174,7 +177,7 @@ class VibecoderSite(http.Controller):
             }
         </script>
         """ % (
-            _topbar(partner), claude_banner,
+            _topbar(partner), banner_html,
             "" if claude_connected else "disabled", project.id,
         )
         return request.make_response(
